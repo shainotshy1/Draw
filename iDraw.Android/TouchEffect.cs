@@ -31,7 +31,7 @@ namespace TouchTracking.Droid
 
         protected override void OnAttached()
         {
-            // Get the Android View corresponding to the Element that the effect is attached to
+            
             view = Control == null ? Container : Control;
 
             // Get access to the TouchEffect class in the .NET Standard library
