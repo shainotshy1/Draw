@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="iDraw.Views.AboutPage"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:tt="clr-namespace:TouchTracking"
+             xmlns:vm="clr-namespace:iDraw.ViewModels"
+             Title="{Binding Title}">
+    
+    <ContentPage.BindingContext>
+        <vm:AboutViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Clear" Clicked="ClearMethod"/>
+        <ToolbarItem Text="Save" Clicked="SaveMethod"/>
+        <ToolbarItem IconImageSource="backward.png" Clicked="Back"/>
+        <ToolbarItem IconImageSource="forward.png" Clicked="Forward"/>
+    </ContentPage.ToolbarItems>
+
+    <Grid BackgroundColor="White"
+              VerticalOptions="FillAndExpand">
+
+        <Grid.BindingContext>
+            <vm:AboutViewModel />
+        </Grid.BindingContext>
+        
+        <Grid.Effects>
+            <tt:TouchEffect Capture="True"
+                                TouchAction="OnTouchEffectAction" />
+        </Grid.Effects>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.2*"/>
+            <ColumnDefinition Width="5.5*"/>
+            <ColumnDefinition Width="0.3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+
+        <skia:SKCanvasView x:Name="canvasView" Grid.ColumnSpan="3"
+                               PaintSurface="OnCanvasViewPaintSurface" />
+
+        <StackLayout Padding="30,0,0,0" VerticalOptions="Center" Spacing="20">
+            <ImageButton x:Name="setting" BackgroundColor="Transparent" Source="{Binding Button0}" Command="{Binding DividerCommand}" Scale="1.3"/>
+            <ImageButton x:Name="button1" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button1}" Command="{Binding Button1Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button2" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button2}" Command="{Binding Button2Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button3" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button3}" Command="{Binding Button3Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button4" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button4}" Command="{Binding Button4Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button5" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button5}" Command="{Binding Button5Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button6" BackgroundColor="Transparent" Scale="1.3" Source="{Binding Button6}" Command="{Binding Button6Command}" Clicked="buttonChange"/>
+            <ImageButton x:Name="button7" BackgroundColor="Transparent" Scale="1.5" Source="{Binding Button7}" Command="{Binding Button7Command}" Clicked="buttonChange" Margin="0,20,0,0"/>
+        </StackLayout>
+
+        <StackLayout Grid.Column="2" Margin="-50,0,-50,0">
+            <BoxView BackgroundColor="Transparent" HeightRequest="250"/>
+            <ScrollView  VerticalScrollBarVisibility="Never" Orientation="Vertical"  
+                    HorizontalScrollBarVisibility="Never" Rotation="-90" Margin="-170,0,-140,0">
+                <Slider x:Name="sizeSlider"
+                        Maximum="100" Minimum="10" ThumbColor="Black" MinimumTrackColor="#E8B6FA" Value="{Binding SliderValue}"
+                        MaximumTrackColor="Gray" ValueChanged="sizeSlider_ValueChanged">
+                </Slider>
+
+            </ScrollView>
+        </StackLayout>
+
+        <BoxView x:Name="divider" IsVisible="{Binding Divider}" VerticalOptions="FillAndExpand" HorizontalOptions="Center" WidthRequest="2" Color="Black" Grid.ColumnSpan="3"/>
+
+    </Grid>
+</ContentPage>
