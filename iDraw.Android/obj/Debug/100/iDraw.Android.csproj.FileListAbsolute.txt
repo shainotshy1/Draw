@@ -600,3 +600,5 @@ C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_ConvertReso
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_GenerateJavaStubs.stamp
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_GeneratePackageManagerJava.stamp
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_ResolveLibraryProjectImports.stamp
+C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\saveicon.png
+C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\brushicon.png
