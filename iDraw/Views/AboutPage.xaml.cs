@@ -41,22 +41,24 @@ namespace iDraw.Views
         {
             InitializeComponent();
 
-            //ItemsPage._connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            ItemsPage._connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
             ItemsPage._connection = DependencyService.Get<ISQLiteDb>().GetConnection();
         }
         protected override async void OnAppearing()
         {
+            base.OnAppearing();
+            
             await ItemsPage._connection.CreateTableAsync<Item>();
 
             var recipes = await ItemsPage._connection.Table<Item>().ToListAsync();
             ItemsPage.Drawings = new ObservableCollection<Item>(recipes);
 
-            /*await ItemsPage._connection2.CreateTableAsync<List<SKPath>>();
+            await ItemsPage._connection2.CreateTableAsync<PathItem>();
 
-            var recipes2 = await ItemsPage._connection2.Table<List<SKPath>>().ToListAsync();
-            ItemsPage.Paths = new ObservableCollection<List<SKPath>>(recipes2);*/
+            var recipes2 = await ItemsPage._connection2.Table<PathItem>().ToListAsync();
+            ItemsPage.Paths = new ObservableCollection<PathItem>(recipes2);
 
-            base.OnAppearing();
+            UpdateBitmap();
         }
 
         void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
@@ -228,7 +230,8 @@ namespace iDraw.Views
                 {
                     for (int i = 0; i < completedPaths.Count; i++)
                     {
-                        saveBitmapCanvas.DrawPath(completedPaths[i], pathColors[i]);
+                        //saveBitmapCanvas.DrawPath(completedPaths[i], pathColors[i]);
+                        saveBitmapCanvas.DrawPath(completedPaths[i], paint);
                     }
                 }
 
@@ -509,10 +512,16 @@ namespace iDraw.Views
                 await ItemsPage._connection.InsertAsync(recipe);
                 ItemsPage.Drawings.Add(recipe);
 
-                /*var recipe2 = completedPaths;
+                int index = ItemsPage.Drawings.Count - 1;
 
-                await ItemsPage._connection2.InsertAsync(recipe2);
-                ItemsPage.Paths.Add(completedPaths);*/
+                foreach(SKPath path in completedPaths)
+                {
+                    var recipe2 = new PathItem { Path=path.ToSvgPathData(),PathIndex = index};
+
+                    await ItemsPage._connection2.InsertAsync(recipe2);
+                    ItemsPage.Paths.Add(recipe2);
+                } 
+                
             }
         }
     }
