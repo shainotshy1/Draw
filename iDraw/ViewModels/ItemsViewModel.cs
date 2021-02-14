@@ -7,71 +7,27 @@ using Xamarin.Forms;
 
 using iDraw.Models;
 using iDraw.Views;
+using SQLite;
+using iDraw.Services;
 
 namespace iDraw.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
-
-        public ObservableCollection<Item> Items { get; }
-        public Command LoadItemsCommand { get; }
-        public Command<Item> ItemTapped { get; }
 
         public ItemsViewModel()
         {
             Title = "Drawings";
-            Items = new ObservableCollection<Item>();
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
+            DeleteCommand = new Command(() => Delete());
         }
 
-        async Task ExecuteLoadItemsCommand()
+        public void Delete()
         {
-            IsBusy = true;
-
-            try
-            {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
-                {
-                    Items.Add(item);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            Title = "Done";
         }
 
-        public void OnAppearing()
-        {
-            IsBusy = true;
-            SelectedItem = null;
-        }
-
-        public Item SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                SetProperty(ref _selectedItem, value);
-                OnItemSelected(value);
-            }
-        }
-
-        private void OnAddItem(object obj)
-        {
-        }
-
-        void OnItemSelected(Item item)
-        {
-        }
+        public Command LoadCommand { get; }
+        public Command DeleteCommand { get; }
     }
 }

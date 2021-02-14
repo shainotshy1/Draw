@@ -602,3 +602,5 @@ C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_GeneratePac
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\stamp\_ResolveLibraryProjectImports.stamp
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\saveicon.png
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\brushicon.png
+C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\download.png
+C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\cancel.png

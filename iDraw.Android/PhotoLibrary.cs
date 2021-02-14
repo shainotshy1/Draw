@@ -30,6 +30,7 @@ namespace iDraw.Droid
 
         // Saving photos requires android.permission.WRITE_EXTERNAL_STORAGE in AndroidManifest.xml
 
+        [System.Obsolete]
         public async Task<bool> SavePhotoAsync(byte[] data, string folder, string filename)
         {
             try

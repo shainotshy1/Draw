@@ -12,10 +12,11 @@
     </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Clicked="SaveMethod"/>
-        <ToolbarItem Text="Clear" Clicked="ClearMethod"/>
-        
+        <ToolbarItem IconImageSource="saveicon.png" Clicked="SaveMethod" />
+        <ToolbarItem IconImageSource="download.png" Clicked="DownloadMethod"/>
+
         <ToolbarItem IconImageSource="backward.png" Clicked="Back"/>
+        <ToolbarItem IconImageSource="cancel.png" Clicked="ClearMethod"/>
         <ToolbarItem IconImageSource="forward.png" Clicked="Forward"/>
     </ContentPage.ToolbarItems>
 

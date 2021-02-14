@@ -1,8 +1,10 @@
 ﻿using iDraw.Models;
+using iDraw.Services;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using TouchTracking;
@@ -14,7 +16,7 @@ namespace iDraw.Views
     public partial class AboutPage : ContentPage
     {
         Dictionary<long, SKPath> inProgressPaths = new Dictionary<long, SKPath>();
-        List<SKPath> completedPaths = new List<SKPath>();
+        public static List<SKPath> completedPaths = new List<SKPath>();
         List<SKPath> pathCache = new List<SKPath>();
         List<SKPaint> colorCache = new List<SKPaint>();
 
@@ -37,8 +39,24 @@ namespace iDraw.Views
 
         public AboutPage()
         {
-            
             InitializeComponent();
+
+            //ItemsPage._connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            ItemsPage._connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+        }
+        protected override async void OnAppearing()
+        {
+            await ItemsPage._connection.CreateTableAsync<Item>();
+
+            var recipes = await ItemsPage._connection.Table<Item>().ToListAsync();
+            ItemsPage.Drawings = new ObservableCollection<Item>(recipes);
+
+            /*await ItemsPage._connection2.CreateTableAsync<List<SKPath>>();
+
+            var recipes2 = await ItemsPage._connection2.Table<List<SKPath>>().ToListAsync();
+            ItemsPage.Paths = new ObservableCollection<List<SKPath>>(recipes2);*/
+
+            base.OnAppearing();
         }
 
         void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
@@ -440,7 +458,7 @@ namespace iDraw.Views
             }
         }
 
-        private async void SaveMethod(object sender, EventArgs e)
+        private async void DownloadMethod(object sender, EventArgs e)
         {
 
             /*using (MemoryStream memStream = new MemoryStream())
@@ -478,6 +496,23 @@ namespace iDraw.Views
                 {
                     await DisplayAlert("FingerPaint", "Artwork could not be saved. Sorry!", "OK");
                 }
+            }
+        }
+        private async void SaveMethod(object sender, EventArgs e)
+        {
+            string name = await DisplayPromptAsync("Save", "Input name of drawing", "OK", "Cancel", "Drawing...");
+
+            if (name != "Drawing..." && name!= null && name != ""){
+
+                var recipe = new Item { Text = name, Date = Convert.ToString(DateTime.Now) };
+
+                await ItemsPage._connection.InsertAsync(recipe);
+                ItemsPage.Drawings.Add(recipe);
+
+                /*var recipe2 = completedPaths;
+
+                await ItemsPage._connection2.InsertAsync(recipe2);
+                ItemsPage.Paths.Add(completedPaths);*/
             }
         }
     }
