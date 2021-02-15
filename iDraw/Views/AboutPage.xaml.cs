@@ -17,12 +17,12 @@ namespace iDraw.Views
     {
         Dictionary<long, SKPath> inProgressPaths = new Dictionary<long, SKPath>();
         public static List<SKPath> completedPaths = new List<SKPath>();
-        List<SKPath> pathCache = new List<SKPath>();
-        List<SKPaint> colorCache = new List<SKPaint>();
+        public static List<SKPath> pathCache = new List<SKPath>();
+        public static List<SKPaint> colorCache = new List<SKPaint>();
 
-        List<int> actionCount = new List<int>();
+        public static List<int> actionCount = new List<int>();
 
-        int cacheIndex = -1;
+        public static int cacheIndex = -1;
 
         public static List<SKPaint> pathColors = new List<SKPaint>();
 
@@ -40,14 +40,14 @@ namespace iDraw.Views
         public AboutPage()
         {
             InitializeComponent();
-
-            ItemsPage._connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            
             ItemsPage._connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            ItemsPage._connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            ItemsPage._connection3 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            ItemsPage._connection4 = DependencyService.Get<ISQLiteDb>().GetConnection();
         }
         protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            
+        {        
             await ItemsPage._connection.CreateTableAsync<Item>();
 
             var recipes = await ItemsPage._connection.Table<Item>().ToListAsync();
@@ -58,7 +58,19 @@ namespace iDraw.Views
             var recipes2 = await ItemsPage._connection2.Table<PathItem>().ToListAsync();
             ItemsPage.Paths = new ObservableCollection<PathItem>(recipes2);
 
+            await ItemsPage._connection3.CreateTableAsync<PaintItem>();
+
+            var recipes3 = await ItemsPage._connection3.Table<PaintItem>().ToListAsync();
+            ItemsPage.Colors = new ObservableCollection<PaintItem>(recipes3);
+
+            await ItemsPage._connection4.CreateTableAsync<Index>();
+
+            var recipes4 = await ItemsPage._connection4.Table<Index>().ToListAsync();
+            ItemsPage.PathIndexes = new ObservableCollection<Index>(recipes4);
+
             UpdateBitmap();
+
+            base.OnAppearing();
         }
 
         void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
@@ -230,8 +242,7 @@ namespace iDraw.Views
                 {
                     for (int i = 0; i < completedPaths.Count; i++)
                     {
-                        //saveBitmapCanvas.DrawPath(completedPaths[i], pathColors[i]);
-                        saveBitmapCanvas.DrawPath(completedPaths[i], paint);
+                        saveBitmapCanvas.DrawPath(completedPaths[i], pathColors[i]);
                     }
                 }
 
@@ -507,12 +518,17 @@ namespace iDraw.Views
 
             if (name != "Drawing..." && name!= null && name != ""){
 
-                var recipe = new Item { Text = name, Date = Convert.ToString(DateTime.Now) };
+                var _recipe = new Index { Count = ItemsPage.PathIndexes.Count };
+
+                await ItemsPage._connection4.InsertAsync(_recipe);
+                ItemsPage.PathIndexes.Add(_recipe);
+
+                var recipe = new Item { Text = name, Date = Convert.ToString(DateTime.Now),Index = ItemsPage.PathIndexes[ItemsPage.PathIndexes.Count-1].Count };
 
                 await ItemsPage._connection.InsertAsync(recipe);
                 ItemsPage.Drawings.Add(recipe);
 
-                int index = ItemsPage.Drawings.Count - 1;
+                int index = recipe.Index;
 
                 foreach(SKPath path in completedPaths)
                 {
@@ -520,6 +536,15 @@ namespace iDraw.Views
 
                     await ItemsPage._connection2.InsertAsync(recipe2);
                     ItemsPage.Paths.Add(recipe2);
+
+                    int _index = completedPaths.IndexOf(path);
+                    SKPaint paint = pathColors[_index];
+
+                    var recipe3 = new PaintItem { Style = Constants.styles.IndexOf(paint.Style), Color = Constants.colors.IndexOf(paint.Color),
+                                                StrokeWidth = paint.StrokeWidth,StrokeCap = Constants.strokecaps.IndexOf(paint.StrokeCap),
+                                                StrokeJoin = Constants.strokejoins.IndexOf(paint.StrokeJoin)};
+                    await ItemsPage._connection3.InsertAsync(recipe3);
+                    ItemsPage.Colors.Add(recipe3);
                 } 
                 
             }

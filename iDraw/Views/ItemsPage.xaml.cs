@@ -25,15 +25,20 @@ namespace iDraw.Views
 
         public static SQLiteAsyncConnection _connection;
         public static SQLiteAsyncConnection _connection2;
+        public static SQLiteAsyncConnection _connection3;
+        public static SQLiteAsyncConnection _connection4;
         public static ObservableCollection<Item> Drawings;
         public static ObservableCollection<PathItem> Paths;
+        public static ObservableCollection<PaintItem> Colors;
+        public static ObservableCollection<Index> PathIndexes;
 
         public ItemsPage()
         {
             InitializeComponent();
 
-            _connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            _connection2 = DependencyService.Get<ISQLiteDb>().GetConnection();
+            _connection3 = DependencyService.Get<ISQLiteDb>().GetConnection();
 
         }
 
@@ -48,7 +53,17 @@ namespace iDraw.Views
 
             var recipes2 = await _connection2.Table<PathItem>().ToListAsync();
             Paths = new ObservableCollection<PathItem>(recipes2);
-            
+
+            await _connection3.CreateTableAsync<PaintItem>();
+
+            var recipes3 = await _connection3.Table<PaintItem>().ToListAsync();
+            Colors = new ObservableCollection<PaintItem>(recipes3);
+
+            await _connection4.CreateTableAsync<Index>();
+
+            var recipes4 = await _connection4.Table<Index>().ToListAsync();
+            PathIndexes = new ObservableCollection<Index>(recipes4);
+
             ItemsListView.ItemsSource = Drawings;
 
             base.OnAppearing();
@@ -86,25 +101,48 @@ namespace iDraw.Views
 
             int index = Drawings.IndexOf(button.BindingContext);
 
+            int indexOfDrawing = Drawings[index].Index;
+
             await DisplayAlert("Loading", "Loaded " + Drawings[index].Text + " on drawing pad", "OK");
 
             AboutPage.completedPaths.Clear();
+            AboutPage.pathColors.Clear();
 
             bool atIndex = false;
 
             foreach(PathItem path in Paths)
             {
-                if(path.PathIndex == index)
+                if(path.PathIndex == indexOfDrawing)
                 {
                     atIndex = true;
+
+                    int _index = Paths.IndexOf(path);
+
                     SKPath newPath = SKPath.ParseSvgPathData(path.Path);
                     AboutPage.completedPaths.Add(newPath);
+
+                    PaintItem item = Colors[_index];
+
+                    SKPaint paint = new SKPaint
+                    {
+                        Style = Constants.styles[item.Style],
+                        Color = Constants.colors[item.Color],
+                        StrokeWidth = item.StrokeWidth,
+                        StrokeCap = Constants.strokecaps[item.StrokeCap],
+                        StrokeJoin = Constants.strokejoins[item.StrokeJoin]
+                    };
+                    AboutPage.pathColors.Add(paint);
                 }
                 else if(atIndex)
                 {
                     break;
                 }
             }
+
+            AboutPage.cacheIndex = -1;
+            AboutPage.actionCount.Clear();
+            AboutPage.colorCache.Clear();
+            AboutPage.pathCache.Clear();
         }
 
         private async void Delete(object sender, EventArgs e)
@@ -113,17 +151,48 @@ namespace iDraw.Views
 
             int index = Drawings.IndexOf(button.BindingContext);
 
+            int indexOfDrawing = Drawings[index].Index;
+
             string delete = await DisplayActionSheet("Are you sure you want to delete "+Drawings[index].Text+"?", null, null, "Cancel", "OK");
 
             if (delete == "OK")
             {
+                int count = 0;
+                int start = -1;
+                bool atIndex = false;
+
+                foreach (PathItem path in Paths)
+                {
+                    if (!atIndex)
+                    {
+                        start++;
+                    }
+                    if (path.PathIndex == indexOfDrawing)
+                    {
+                        count++;
+                        atIndex = true;
+                    }
+                    else if (path.PathIndex != indexOfDrawing && atIndex)
+                    {
+                        break;
+                    }
+                }
+                for (int i = 0; i < count; i++)
+                {
+                    var recipe2 = Paths[start];
+
+                    await _connection2.DeleteAsync(recipe2);
+                    Paths.Remove(recipe2);
+
+                    var recipe3 = Colors[start];
+
+                    await _connection3.DeleteAsync(recipe3);
+                    Colors.Remove(recipe3);
+                }
+
                 var recipe = Drawings[index];
                 await _connection.DeleteAsync(recipe);
                 Drawings.Remove(recipe);
-
-                var recipe2 = Paths[0];
-                await _connection2.DeleteAsync(recipe2);
-                Paths.Remove(recipe2);
             }
         }
     }

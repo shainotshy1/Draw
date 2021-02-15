@@ -649,7 +649,7 @@
 
 	/* 69: iDraw.Android.dll */
 	/* uncompressed_file_size */
-	.long	339456
+	.long	339968
 	/* loaded */
 	.byte	0
 	/* data */
@@ -658,7 +658,7 @@
 
 	/* 70: iDraw.dll */
 	/* uncompressed_file_size */
-	.long	56832
+	.long	58368
 	/* loaded */
 	.byte	0
 	/* data */
