@@ -22,6 +22,7 @@ namespace iDraw.ViewModels
             Button7 = "eraserOff.png";
 
             Divider = false;
+            Divider2 = false;
 
             SliderValue = 0.2;
 
@@ -62,15 +63,22 @@ namespace iDraw.ViewModels
             });
             DividerCommand = new Command(() =>
             {
-                Divider = !Divider;
                 if (Button0.Equals("whole.png"))
                 {
                     Button0 = "divided.png";
+                    Divider = true;
+                }
+                else if(Button0.Equals("divided.png"))
+                {
+                    Button0 = "quad.png";
+                    Divider2 = true;
                 }
                 else
                 {
                     Button0 = "whole.png";
-                }     
+                    Divider = false;
+                    Divider2 = false;
+                }
             });
         }
 

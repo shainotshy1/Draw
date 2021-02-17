@@ -6261,16 +6261,17 @@ public final class R {
     public static final int notify_panel_notification_icon_bg=0x7f07009b;
     public static final int orangeoff=0x7f07009c;
     public static final int orangeon=0x7f07009d;
-    public static final int redoff=0x7f07009e;
-    public static final int redon=0x7f07009f;
-    public static final int saveicon=0x7f0700a0;
-    public static final int slider=0x7f0700a1;
-    public static final int test_custom_background=0x7f0700a2;
-    public static final int tooltip_frame_dark=0x7f0700a3;
-    public static final int tooltip_frame_light=0x7f0700a4;
-    public static final int whole=0x7f0700a5;
-    public static final int yellowoff=0x7f0700a6;
-    public static final int yellowon=0x7f0700a7;
+    public static final int quad=0x7f07009e;
+    public static final int redoff=0x7f07009f;
+    public static final int redon=0x7f0700a0;
+    public static final int saveicon=0x7f0700a1;
+    public static final int slider=0x7f0700a2;
+    public static final int test_custom_background=0x7f0700a3;
+    public static final int tooltip_frame_dark=0x7f0700a4;
+    public static final int tooltip_frame_light=0x7f0700a5;
+    public static final int whole=0x7f0700a6;
+    public static final int yellowoff=0x7f0700a7;
+    public static final int yellowon=0x7f0700a8;
   }
   public static final class id {
     public static final int ALT=0x7f080000;

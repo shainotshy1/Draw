@@ -88,6 +88,12 @@ namespace iDraw.ViewModels
             get { return divider; }
             set { SetProperty(ref divider,value); }
         }
+        bool divider2 = false;
+        public bool Divider2
+        {
+            get { return divider2; }
+            set { SetProperty(ref divider2, value); }
+        }
         protected bool SetProperty<T>(ref T backingStore, T value,
             [CallerMemberName] string propertyName = "",
             Action onChanged = null)

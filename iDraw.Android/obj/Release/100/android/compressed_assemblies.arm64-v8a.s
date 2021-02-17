@@ -26,7 +26,7 @@
 
 	/* 2: Mono.Android.dll */
 	/* uncompressed_file_size */
-	.word	2055680
+	.word	2046976
 	/* loaded */
 	.byte	0
 	/* data */
@@ -566,7 +566,7 @@
 
 	/* 62: Xamarin.Essentials.dll */
 	/* uncompressed_file_size */
-	.word	26112
+	.word	22528
 	/* loaded */
 	.byte	0
 	/* data */
@@ -629,7 +629,7 @@
 
 	/* 69: iDraw.Android.dll */
 	/* uncompressed_file_size */
-	.word	339968
+	.word	339456
 	/* loaded */
 	.byte	0
 	/* data */
@@ -638,7 +638,7 @@
 
 	/* 70: iDraw.dll */
 	/* uncompressed_file_size */
-	.word	58368
+	.word	62464
 	/* loaded */
 	.byte	0
 	/* data */

@@ -12,6 +12,5 @@ namespace iDraw
         {
             InitializeComponent();
         }
-
     }
 }

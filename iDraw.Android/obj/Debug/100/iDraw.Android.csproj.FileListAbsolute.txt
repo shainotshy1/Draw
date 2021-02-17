@@ -604,3 +604,4 @@ C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\savei
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\brushicon.png
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\download.png
 C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\cancel.png
+C:\Users\Shai\Desktop\iDraw\iDraw\iDraw.Android\obj\Debug\100\res\drawable\quad.png

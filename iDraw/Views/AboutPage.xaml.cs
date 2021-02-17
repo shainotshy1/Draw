@@ -115,8 +115,6 @@ namespace iDraw.Views
             double x = args.Location.X;
             double y = args.Location.Y;
 
-            Point returnPoint = new Point();
-
             if (x > canvasView.Width / 2.0)
             {
                 x -= 2 * (x - canvasView.Width/2.0);
@@ -126,12 +124,64 @@ namespace iDraw.Views
                 x += 2 * (canvasView.Width/2.0 - x);
             }
 
-            returnPoint = new Point(x, y);
+            Point returnPoint = new Point(x, y);
 
             return returnPoint;
         }
 
-        void OnTouchEffectAction(object sender, TouchActionEventArgs args)
+        Point MakeQuadPoint(TouchActionEventArgs args,int quadrant)
+        {
+            double x = args.Location.X;
+            double y = args.Location.Y;
+
+            switch (quadrant)
+            {
+                case 1:
+                    if (x > canvasView.Width / 2.0)
+                    {
+                        x -= 2 * (x - canvasView.Width / 2.0);
+                    }
+                    else
+                    {
+                        x += 2 * (canvasView.Width / 2.0 - x);
+                    }
+                    break;
+                case 2:
+                    if (x > canvasView.Width / 2.0)
+                    {
+                        x -= 2 * (x - canvasView.Width / 2.0);
+                    }
+                    else
+                    {
+                        x += 2 * (canvasView.Width / 2.0 - x);
+                    }
+                    if (y > canvasView.Height / 2.0)
+                    {
+                        y -= 2 * (y - canvasView.Height / 2.0);
+                    }
+                    else
+                    {
+                        y += 2 * (canvasView.Height / 2.0 - y);
+                    }
+                    break;
+                case 3:
+                    if (y > canvasView.Height / 2.0)
+                    {
+                        y -= 2 * (y - canvasView.Height / 2.0);
+                    }
+                    else
+                    {
+                        y += 2 * (canvasView.Height / 2.0 - y);
+                    }
+                    break;
+            }
+
+            Point returnPoint = new Point(x, y);
+            
+            return returnPoint;
+    }
+
+    void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
             switch (args.Type)
             {
@@ -144,11 +194,25 @@ namespace iDraw.Views
 
                         if (divider.IsVisible)
                         {
-                            Point newPoint = MakeOppositePoint(args);
+                            if (divider2.IsVisible)
+                            {
+                                for(int i = 1; i < 4; i++)
+                                {
+                                    Point newPoint = MakeQuadPoint(args,i);
 
-                            SKPath path2 = new SKPath();
-                            path2.MoveTo(ConvertToPixel(newPoint));
-                            inProgressPaths.Add(args.Id + 1, path2);
+                                    SKPath path2 = new SKPath();
+                                    path2.MoveTo(ConvertToPixel(newPoint));
+                                    inProgressPaths.Add(args.Id + i, path2);
+                                }
+                            }
+                            else
+                            {
+                                Point newPoint = MakeOppositePoint(args);
+
+                                SKPath path2 = new SKPath();
+                                path2.MoveTo(ConvertToPixel(newPoint));
+                                inProgressPaths.Add(args.Id + 1, path2);
+                            } 
                         }    
                         UpdateBitmap();
                     }
@@ -162,10 +226,23 @@ namespace iDraw.Views
 
                         if (divider.IsVisible)
                         {
-                            Point newPoint = MakeOppositePoint(args);
+                            if (divider2.IsVisible)
+                            {
+                                for (int i = 1; i < 4; i++)
+                                {
+                                    Point newPoint = MakeQuadPoint(args, i);
 
-                            SKPath path2 = inProgressPaths[args.Id + 1];
-                            path2.LineTo(ConvertToPixel(newPoint));
+                                    SKPath path2 = inProgressPaths[args.Id + i];
+                                    path2.LineTo(ConvertToPixel(newPoint));
+                                }
+                            }
+                            else
+                            {
+                                Point newPoint = MakeOppositePoint(args);
+
+                                SKPath path2 = inProgressPaths[args.Id + 1];
+                                path2.LineTo(ConvertToPixel(newPoint));
+                            }
                         }
                         
                         UpdateBitmap();
@@ -190,9 +267,21 @@ namespace iDraw.Views
 
                         if (divider.IsVisible)
                         {
-                            completedPaths.Add(inProgressPaths[args.Id + 1]);
-                            inProgressPaths.Remove(args.Id + 1);
-                            pathColors.Add(newPath);
+                            if (divider2.IsVisible)
+                            {
+                                for (int i = 1; i < 4; i++)
+                                {
+                                    completedPaths.Add(inProgressPaths[args.Id + i]);
+                                    inProgressPaths.Remove(args.Id + i);
+                                    pathColors.Add(newPath);
+                                }
+                            }
+                            else
+                            {
+                                completedPaths.Add(inProgressPaths[args.Id + 1]);
+                                inProgressPaths.Remove(args.Id + 1);
+                                pathColors.Add(newPath);
+                            }
                         }
                         
                         pathCache.Clear();
@@ -200,7 +289,14 @@ namespace iDraw.Views
 
                         if (divider.IsVisible)
                         {
-                            actionCount.Add(2);
+                            if (divider2.IsVisible)
+                            {
+                                actionCount.Add(4);
+                            }
+                            else
+                            {
+                                actionCount.Add(2);
+                            }
                         }
                         else
                         {
@@ -218,6 +314,13 @@ namespace iDraw.Views
                         inProgressPaths.Remove(args.Id);
                         if (divider.IsVisible)
                         {
+                            if (divider2.IsVisible)
+                            {
+                                for(int i = 1; i < 4; i++)
+                                {
+                                    inProgressPaths.Remove(args.Id + i);
+                                }
+                            }
                             inProgressPaths.Remove(args.Id + 1);
                         }
                         UpdateBitmap();
@@ -371,6 +474,21 @@ namespace iDraw.Views
 
                         cacheIndex -= 1;
                     }
+                    else if (actionCount[cacheIndex] == 4)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (completedPaths.Count > 0)
+                            {
+                                pathCache.Add(completedPaths[completedPaths.Count - 1]);
+                                colorCache.Add(pathColors[pathColors.Count - 1]);
+                                completedPaths.Remove(completedPaths[completedPaths.Count - 1]);
+                                pathColors.Remove(pathColors[pathColors.Count - 1]);
+                            }
+                        }
+
+                        cacheIndex -= 1;
+                    }
                     else if (actionCount[cacheIndex] < 0)
                     {
                         for (int i = actionCount[cacheIndex]; i < 0; i++)
@@ -424,6 +542,20 @@ namespace iDraw.Views
                             }  
                         }
                     }
+                    else if (actionCount[cacheIndex] == 4)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (pathCache.Count > 0)
+                            {
+                                completedPaths.Add(pathCache[pathCache.Count - 1]);
+                                pathColors.Add(colorCache[colorCache.Count - 1]);
+
+                                pathCache.RemoveAt(pathCache.Count - 1);
+                                colorCache.RemoveAt(colorCache.Count - 1);
+                            }
+                        }
+                    }
                     else if (actionCount[cacheIndex] < 0)
                     {
                         Clear();
@@ -475,36 +607,15 @@ namespace iDraw.Views
         private async void DownloadMethod(object sender, EventArgs e)
         {
 
-            /*using (MemoryStream memStream = new MemoryStream())
-            using (SKManagedWStream wstream = new SKManagedWStream(memStream))
-            {
-                saveBitmap.Encode(wstream, SKEncodedImageFormat.Png, 100);
-
-                byte[] data = memStream.ToArray();
-
-                if (data != null && data.Length != 0)
-                {
-                    string fileName = "test";
-                    await DependencyService.Get<IPhotoLibrary>().
-                    SavePhotoAsync(data, "SaveFileFormats", fileName + ".Jpeg");
-                }
-            }*/
-
-            
             using (SKImage image = SKImage.FromBitmap(saveBitmap))
             {
-                SKData data = image.Encode(SKEncodedImageFormat.Png, 100);
+                SKData data = image.Encode();
                 DateTime dt = DateTime.Now;
                 string filename = String.Format("FingerPaint-{0:D4}{1:D2}{2:D2}-{3:D2}{4:D2}{5:D2}{6:D3}.png",
                                                 dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
 
-                byte[] _data = data.ToArray();
-
                 IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
-
-                //error with Save Photo Async object references
-
-                bool result = await photoLibrary.SavePhotoAsync(_data, "FingerPaint", filename);
+                bool result = await photoLibrary.SavePhotoAsync(data.ToArray(), "FingerPaint", filename);
 
                 if (!result)
                 {

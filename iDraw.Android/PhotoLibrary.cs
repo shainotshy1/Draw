@@ -3,7 +3,11 @@
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using iDraw.Droid;
 using Java.IO;
+using Xamarin.Forms;
+
+[assembly: Dependency(typeof(PhotoLibrary))]
 
 namespace iDraw.Droid
 {

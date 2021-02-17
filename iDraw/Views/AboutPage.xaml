@@ -69,6 +69,7 @@
         </StackLayout>
 
         <BoxView x:Name="divider" IsVisible="{Binding Divider}" VerticalOptions="FillAndExpand" HorizontalOptions="Center" WidthRequest="2" Color="Black" Grid.ColumnSpan="3"/>
+        <BoxView x:Name="divider2" IsVisible="{Binding Divider2}" HorizontalOptions="FillAndExpand" VerticalOptions="Center" HeightRequest="2" Color="Black" Grid.ColumnSpan="3"/>
 
     </Grid>
 </ContentPage>
